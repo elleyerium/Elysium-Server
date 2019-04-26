@@ -44,20 +44,16 @@ namespace ServerTest.Server.Connector
 
         public static async Task SyncTask()
         {
-            Task sync = new Task(action:listener.Start);
+            Task sync = new Task(action: listener.Start);
             listener.Start();
             TcpClient client = await listener.AcceptTcpClientAsync();
             NetworkStream nwStream = client.GetStream();
             byte[] bufferreceive = new byte[client.ReceiveBufferSize];
-            int bytesRead = nwStream.Read(bufferreceive, 0, client.ReceiveBufferSize);      
+            int bytesRead = nwStream.Read(bufferreceive, 0, client.ReceiveBufferSize);
             String dataReceived = Encoding.ASCII.GetString(bufferreceive);
             ClientAction.Action(dataReceived);
-                string dataReceived = Encoding.ASCII.GetString(bufferreceive);
-                Auth.Register.RegisterProfile(dataReceived);
-
             client.Close();
             listener.Stop();
-            return;
         }
     }
 }
