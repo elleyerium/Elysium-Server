@@ -12,31 +12,35 @@ namespace ServerTest.Server.Connector
 {
     class ClientAction
     {
-
+        private static string Prepare(string text)
+        {
+            return text.Substring(0, text.IndexOf('\0'));
+        }
         public static string Action(string ReveivedTag)
         {
-            switch (ReveivedTag)
+            var tag = Prepare(ReveivedTag);
+            switch (tag)
             {
                 case "RegistrationRequest":
-                    RequestToDB.CreateRequest(INSERT.InsertRequest("scores", Items.GetRegisterList(), Items.SetRegisterList(ReveivedTag)));
+                    RequestToDB.CreateRequest(INSERT.InsertRequest("scores", Items.GetRegisterList(), Items.SetRegisterList(tag)));
                     break;
                 case "LoginRequest":
-                    //Tag = "2";
+                    //tag = "2";
                     break;
                 case "SetScoreRequest":
-                    //Tag = "4";
+                    //tag = "4";
                     break;
                 case "GetScoreRequest":
-                    //Tag = "4";
+                    //tag = "4";
                     break;
                 case "GetPlayerStatsPosition":
-                    //Tag = "5";
+                    //tag = "5";
                     break;
                 default:
-                    ServerInterface.FormsManaging.TextGenerator(ReveivedTag);
-                    throw new Exception(ReveivedTag);
+                    ServerInterface.FormsManaging.TextGenerator(tag);
+                    throw new Exception(tag);
             }
-            return ReveivedTag;
+            return tag;
         }
     }
 }
