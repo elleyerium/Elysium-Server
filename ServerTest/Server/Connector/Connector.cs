@@ -52,6 +52,9 @@ namespace ServerTest.Server.Connector
             int bytesRead = nwStream.Read(bufferreceive, 0, client.ReceiveBufferSize);      
             String dataReceived = Encoding.ASCII.GetString(bufferreceive);
             ClientAction.Action(dataReceived);
+                string dataReceived = Encoding.ASCII.GetString(bufferreceive);
+                Auth.Register.RegisterProfile(dataReceived);
+
             client.Close();
             listener.Stop();
             return;

@@ -12,14 +12,10 @@ namespace ServerTest.Server.Connector
 {
     class ClientAction
     {
-        public static string Action(string ReceivedData)
+
+        public static string Action(string ReveivedTag)
         {
-            string[] s = new string[ReceivedData.Split('|').Count()];
-            s = ReceivedData.Split('|');
-
-            string Tag = s.Last();
-            //ServerInterface.FormsManaging.TextGenerator(Tag);
-
+            string Tag = ReveivedTag;
             switch (Tag)
             {
                 case "RegistrationRequest":
