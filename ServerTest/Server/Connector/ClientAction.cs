@@ -15,11 +15,10 @@ namespace ServerTest.Server.Connector
 
         public static string Action(string ReveivedTag)
         {
-            string Tag = ReveivedTag;
-            switch (Tag)
+            switch (ReveivedTag)
             {
                 case "RegistrationRequest":
-                    RequestToDB.CreateRequest(INSERT.InsertRequest("scores", Items.GetRegisterList(), Items.SetRegisterList(Tag)));
+                    RequestToDB.CreateRequest(INSERT.InsertRequest("scores", Items.GetRegisterList(), Items.SetRegisterList(ReveivedTag)));
                     break;
                 case "LoginRequest":
                     //Tag = "2";
@@ -34,10 +33,10 @@ namespace ServerTest.Server.Connector
                     //Tag = "5";
                     break;
                 default:
-                    ServerInterface.FormsManaging.TextGenerator(Tag);
-                    throw new Exception(Tag);
+                    ServerInterface.FormsManaging.TextGenerator(ReveivedTag);
+                    throw new Exception(ReveivedTag);
             }
-            return Tag;
+            return ReveivedTag;
         }
     }
 }
