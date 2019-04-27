@@ -12,35 +12,41 @@ namespace ServerTest.Server.Connector
 {
     class ClientAction
     {
-        private static string Prepare(string text)
+        public static string Action(string ReceivedData)
         {
-            return text.Substring(0, text.IndexOf('\0'));
-        }
-        public static string Action(string ReveivedTag)
-        {
-            var tag = Prepare(ReveivedTag);
-            switch (tag)
+            string[] s = ReceivedData.Split('|');
+            string request = null;
+            string Tag = s.First();
+            try
             {
-                case "RegistrationRequest":
-                    RequestToDB.CreateRequest(INSERT.InsertRequest("scores", Items.GetRegisterList(), Items.SetRegisterList(tag)));
-                    break;
-                case "LoginRequest":
-                    //tag = "2";
-                    break;
-                case "SetScoreRequest":
-                    //tag = "4";
-                    break;
-                case "GetScoreRequest":
-                    //tag = "4";
-                    break;
-                case "GetPlayerStatsPosition":
-                    //tag = "5";
-                    break;
-                default:
-                    ServerInterface.FormsManaging.TextGenerator(tag);
-                    throw new Exception(tag);
+                switch (Tag)
+                {
+                    case "RegistrationRequest":
+                        request = INSERT.InsertRequest("users",Items.GetRegisterList(), Items.SetRegisterList(s.Last()));
+                        RequestToDB.CreateRequest(request);
+                        break;
+                    case "LoginRequest":
+                        //Tag = "2";
+                        break;
+                    case "SetScoreRequest":
+                        //Tag = "4";
+                        break;
+                    case "GetScoreRequest":
+                        //Tag = "4";
+                        break;
+                    case "GetPlayerStatsPosition":
+                        //Tag = "5";
+                        break;
+                    default:
+                        ServerInterface.FormsManaging.TextGenerator(Tag);
+                        throw new Exception(Tag);
+                }
             }
-            return tag;
+            catch (Exception ex)
+            {
+                ServerInterface.FormsManaging.TextGenerator(request);
+            }
+            return Tag;
         }
     }
 }
