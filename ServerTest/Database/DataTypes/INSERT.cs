@@ -12,28 +12,37 @@ namespace ServerTest.Database.DataTypes
     {
         public static string InsertRequest(string TableName, string columns, string data)
         {
-            string[] ColumnsData = new string[columns.Split(' ').Count() -1];
-            string[] dbData = new string[data.Split(' ').Count() - 1];
-            dbData = data.Split(' ');
-            ColumnsData =  columns.Split(',');
-            string temp = null;
-            string tempData = null;
-
-            foreach(string name in ColumnsData)
+            string command = null;
+            try
             {
-                
-                temp += $"{name},";
+                string[] ColumnsData = new string[columns.Split(' ').Count() - 1];
+                string[] dbData = new string[data.Split(' ').Count() - 1];
+                dbData = data.Split(' ');
+                ColumnsData = columns.Split(',');
+                string temp = null;
+                string tempData = null;
+
+                foreach (string name in ColumnsData)
+                {
+
+                    temp += $"{name},";
+                }
+                foreach (string name in dbData)
+                {
+
+                    tempData += $"'{name}',";
+                }
+
+                var clearColumns = temp.Remove(temp.LastIndexOf(','), 1);
+                var clearData = tempData.Remove(tempData.LastIndexOf(','), 1);
+                FormsManaging.TextGenerator(clearData);
+                command = $"INSERT INTO {TableName} ({clearColumns}) VALUES ({clearData})";
             }
-            foreach (string name in dbData)
+            catch (Exception ex)
             {
-
-                tempData += $"'{name}',";
+                FormsManaging.TextGenerator(ex.ToString());
             }
-
-            var clearColumns = temp.Remove(temp.LastIndexOf(','), 1);
-            var clearData = tempData.Remove(tempData.LastIndexOf(','), 1);
-            var command = $"INSERT INTO  {TableName} ({clearColumns}) VALUES ({clearData})";
-            return command;
+                return command;
         }
     }
 }
