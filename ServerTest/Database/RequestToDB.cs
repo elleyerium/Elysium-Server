@@ -27,7 +27,11 @@ namespace ServerTest.Database
             catch (MySqlException exception)
             {
                 ExecuteResponce(exception);
-                FormsManaging.TextGenerator(ExecuteResponce(exception));
+                FormsManaging.TextGenerator(exception.ToString());
+            }
+            finally
+            {
+                //throw new Exception(requestMessage);
             }
 
         }
