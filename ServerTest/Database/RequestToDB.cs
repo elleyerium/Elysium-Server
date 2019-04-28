@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using ServerTest.Server;
 using ServerTest.Server.ServerInterface;
+using ServerTest.Database.DataTypes;
 
 namespace ServerTest.Database
 {
