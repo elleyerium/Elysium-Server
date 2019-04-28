@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ServerTest.Server.ClientData;
 using ServerTest.Database;
+using ServerTest.Database.DataTypes;
+using ServerTest.Server.ServerInterface;
 
 namespace ServerTest.Server.Auth
 {
@@ -12,10 +14,15 @@ namespace ServerTest.Server.Auth
     {
         public static void Auth(string data)
         {
-            string[] Alldata = data.Split(',');
-            var receivedName = Alldata[0];
-            var receivedPass = Alldata[1];
-            RequestToDB.CreateRequest("SELECT ");
+            try
+            {
+                var req = SELECT.SelectLoginRequest("users", Items.GetLoginList(), Items.SetLoginList(data));
+                RequestToDB.CreateRequest(req);
+            }
+            catch (Exception ex)
+            {
+                FormsManaging.TextGenerator(ex.ToString());
+            }
         }
     }
 }
