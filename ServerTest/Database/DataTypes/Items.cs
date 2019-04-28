@@ -25,7 +25,21 @@ namespace ServerTest.Database.DataTypes
             var EncryptedPass = allIndex[1];
             var email = allIndex[2];
             var ans = $"{username} {EncryptedPass} {email}";
-            FormsManaging.TextGenerator(ans);
+            return ans;
+        }
+
+        public static string GetLoginList()
+        {
+            string data = ("username, password");
+            return data;
+        }
+
+        public static string SetLoginList(string data)
+        {
+            allIndex = data.Split(' ');
+            var username = allIndex[0];
+            var password = allIndex[1];
+            var ans = $"{username} {password}";
             return ans;
         }
     }
