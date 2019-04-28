@@ -14,19 +14,18 @@ namespace ServerTest.Server.Connector
     {
         public static string Action(string ReceivedData)
         {
-            string[] s = ReceivedData.Split('|');
-            string request = null;
-            string Tag = s.First();
+            string[] DataArray = ReceivedData.Split('|');
+            string request = DataArray.Last();
+            string Tag = DataArray.First();
             try
             {
                 switch (Tag)
                 {
                     case "RegistrationRequest":
-                        request = INSERT.InsertRequest("users",Items.GetRegisterList(), Items.SetRegisterList(s.Last()));
-                        RequestToDB.CreateRequest(request);
+                        Register.RegisterProfile(DataArray.Last());
                         break;
                     case "LoginRequest":
-                        //Tag = "2";
+                        Login.Auth(DataArray.Last());
                         break;
                     case "SetScoreRequest":
                         //Tag = "4";
