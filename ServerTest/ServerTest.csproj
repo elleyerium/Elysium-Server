@@ -108,6 +108,8 @@
     <Compile Include="Server\Connector\Connector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\Connector\ServerResponces.cs" />
+    <Compile Include="Tests\LoginTEST.cs" />
+    <Compile Include="Tests\RegisterTEST.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
