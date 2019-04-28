@@ -19,7 +19,6 @@ namespace ServerTest.Server.Auth
             try
             {
                 var req = INSERT.InsertRequest("users", Items.GetRegisterList(), Items.SetRegisterList(data));
-                //var DecryptedPassword = Cryptography.DecryptString(DecryptKey, EncryptedPass);
                 RequestToDB.CreateRequest(req);
             }
 
