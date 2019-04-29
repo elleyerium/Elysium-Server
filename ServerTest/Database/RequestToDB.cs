@@ -22,17 +22,18 @@ namespace ServerTest.Database
                 sqlCommand.CommandText = requestMessage;
                 DatabaseConnector.sqlConnection.Open();
                 Reader = sqlCommand.ExecuteReader();
+                if(Reader.HasRows)
+                    FormsManaging.TextGenerator("user logged in!");
+                else
+                    FormsManaging.TextGenerator("failed to login");
+
                 DatabaseConnector.sqlConnection.Close();
-                FormsManaging.TextGenerator($"{requestMessage} as request has been created!");
+                //FormsManaging.TextGenerator($"{requestMessage} as request has been created!");
             }
             catch (MySqlException exception)
             {
                 ExecuteResponce(exception);
                 FormsManaging.TextGenerator(exception.ToString());
-            }
-            finally
-            {
-                //throw new Exception(requestMessage);
             }
 
         }
@@ -43,3 +44,4 @@ namespace ServerTest.Database
         }
     }
 }
+
