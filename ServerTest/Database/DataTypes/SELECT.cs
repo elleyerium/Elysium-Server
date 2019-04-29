@@ -9,7 +9,7 @@ namespace ServerTest.Database.DataTypes
     class SELECT
     {
         public static string command;
-        public static string SelectLoginRequest(string TableName, string columns, string data)
+        public static string SelectLoginRequest(string attribute, string TableName, string columns, string data)
         {
             command = null;
             try
@@ -20,7 +20,7 @@ namespace ServerTest.Database.DataTypes
                 ColumnsData = columns.Split(',');
                 
 
-                command = $"SELECT * FROM {TableName} WHERE {ColumnsData[0]} = '{dbData[0]}'";
+                command = $"SELECT {attribute} FROM {TableName} WHERE {ColumnsData[0]} = '{dbData[0]}'";
                 for (int i = 1; i < ColumnsData.Length; i++)
                 {
                     Server.ServerInterface.FormsManaging.TextGenerator(ColumnsData[i]);
