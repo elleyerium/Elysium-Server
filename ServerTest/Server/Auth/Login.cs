@@ -7,6 +7,7 @@ using ServerTest.Server.ClientData;
 using ServerTest.Database;
 using ServerTest.Database.DataTypes;
 using ServerTest.Server.ServerInterface;
+using MySql.Data.MySqlClient;
 
 namespace ServerTest.Server.Auth
 {
@@ -16,7 +17,7 @@ namespace ServerTest.Server.Auth
         {
             try
             {
-                var req = SELECT.SelectLoginRequest("users", Items.GetLoginList(), Items.SetLoginList(data));
+                var req = SELECT.SelectLoginRequest("*","users", Items.GetLoginList(), Items.SetLoginList(data));
                 RequestToDB.CreateRequest(req);
             }
             catch (Exception ex)
