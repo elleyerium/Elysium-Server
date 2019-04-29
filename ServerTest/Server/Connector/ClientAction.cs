@@ -23,15 +23,16 @@ namespace ServerTest.Server.Connector
                 {
                     case "RegistrationRequest":
                         Register.RegisterProfile(DataArray.Last());
+                        Scores.CreateTable(Items.GetScoreList(request));
                         break;
                     case "LoginRequest":
                         Login.Auth(DataArray.Last());
                         break;
                     case "SetScoreRequest":
-                        //Tag = "4";
+                        Scores.SetUserScores(request);
                         break;
                     case "GetScoreRequest":
-                        //Tag = "4";
+                        Scores.GetUserScores(Items.GetScoreList(request));
                         break;
                     case "GetPlayerStatsPosition":
                         //Tag = "5";
@@ -43,7 +44,7 @@ namespace ServerTest.Server.Connector
             }
             catch (Exception ex)
             {
-                ServerInterface.FormsManaging.TextGenerator(request);
+                ServerInterface.FormsManaging.TextGenerator(ex.ToString());
             }
             return Tag;
         }
