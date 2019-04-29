@@ -42,5 +42,19 @@ namespace ServerTest.Database.DataTypes
             var ans = $"{username} {password}";
             return ans;
         }
+        public static string GetScoreList(string data)
+        {
+            string username = data.Split(' ')[0];
+            ServerTest.Server.ServerInterface.FormsManaging.TextGenerator(username);
+            return username;
+        }
+        public static string SetUserScore(string data)
+        {
+            allIndex = data.Split(' ');
+            var username = allIndex[0];
+            var score = allIndex[1];
+            var ans = $"{username} {score}";
+            return ans;
+        }
     }
 }
