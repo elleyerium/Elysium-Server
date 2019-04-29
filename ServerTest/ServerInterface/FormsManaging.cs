@@ -18,11 +18,11 @@ namespace ServerTest.Server.ServerInterface
             TextBox text = new TextBox();
             text.Text = $"{DateTime.Now.ToString()} ---> {Message}";
             text.Size = text.GetPreferredSize(text.Size);
-            text.Anchor = AnchorStyles.Left; text.Anchor = AnchorStyles.Right;
+            text.Anchor = AnchorStyles.Left;
             System.Drawing.Size size = new System.Drawing.Size();
             size.Height = 500;
             size.Width = 1050;
-            text.Size = size;
+            //text.Size = size;
             text.ReadOnly = true;
             text.BorderStyle = BorderStyle.None;
             TextToList(text);
