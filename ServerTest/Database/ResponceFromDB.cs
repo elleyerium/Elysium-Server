@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using ServerTest.Server.ServerInterface;
 using ServerTest.Database.DataTypes;
+using Newtonsoft.Json;
 
 namespace ServerTest.Database
 {
@@ -13,6 +14,8 @@ namespace ServerTest.Database
     {
         public static string GetException(MySqlException exception)
         {
+            //JsonSerializer serializer = new JsonSerializer();
+            //serializer.Serialize()
             
             int exceptionNumber = exception.Number;
             string Responce = null;
@@ -53,6 +56,7 @@ namespace ServerTest.Database
                         Return += $"{Reader["username"].ToString()},{Reader["score"].ToString()}|";
                         FormsManaging.TextGenerator(Return);
                     }
+
                     var clear = Return.Remove(Return.LastIndexOf('|'));
                     FormsManaging.TextGenerator(Return);
                     break;

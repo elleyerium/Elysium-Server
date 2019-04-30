@@ -88,9 +88,11 @@
     <Compile Include="Database\DataTypes\INSERT.cs" />
     <Compile Include="Database\DataTypes\Items.cs" />
     <Compile Include="Database\DataTypes\SELECT.cs" />
+    <Compile Include="Database\DataTypes\Tags.cs" />
     <Compile Include="Database\RequestToDB.cs" />
     <Compile Include="Database\ResponceFromDB.cs" />
     <Compile Include="Server\Connector\ClientAction.cs" />
+    <Compile Include="Server\User\Leaderboards\MainLeaderboard.cs" />
     <Compile Include="Server\User\PlayerStatistics\Scores.cs" />
     <Compile Include="ServerInterface\FormsManaging.cs" />
     <Compile Include="ServerInterface\UI.cs">
