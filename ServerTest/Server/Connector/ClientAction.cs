@@ -7,6 +7,7 @@ using ServerTest.Database;
 using ServerTest.Database.DataTypes;
 using ServerTest.Server.Auth;
 using ServerTest.User.PlayerStatistics;
+using ServerTest.Server.User.Leaderboards;
 
 namespace ServerTest.Server.Connector
 {
@@ -17,6 +18,7 @@ namespace ServerTest.Server.Connector
             string[] DataArray = ReceivedData.Split('|');
             string request = DataArray.Last();
             string Tag = DataArray.First();
+            string responce = "1";
             try
             {
                 switch (Tag)
@@ -35,10 +37,11 @@ namespace ServerTest.Server.Connector
                         Scores.GetUserScores(Items.GetScoreList(request));
                         break;
                     case "GetPlayerStatsPosition":
-                        //Tag = "5";
+                        break;
+                    case "GetLeaderboardsRequest":
+                        responce = MainLeaderboard.RequestLeaderboards();
                         break;
                     default:
-                        ServerInterface.FormsManaging.TextGenerator(Tag);
                         throw new Exception(Tag);
                 }
             }
@@ -46,7 +49,7 @@ namespace ServerTest.Server.Connector
             {
                 ServerInterface.FormsManaging.TextGenerator(ex.ToString());
             }
-            return Tag;
+            return responce;
         }
     }
 }
