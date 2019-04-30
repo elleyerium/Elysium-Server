@@ -8,10 +8,10 @@ namespace ServerTest.Database.DataTypes
 {
     class SELECT
     {
-        public static string command;
+        //public static string command;
         public static string SelectLoginRequest(string attribute, string TableName, string columns, string data)
         {
-            command = null;
+            string command = null;
             try
             {
                 string[] ColumnsData = new string[columns.Split(' ').Count()];
@@ -23,7 +23,7 @@ namespace ServerTest.Database.DataTypes
                 command = $"SELECT {attribute} FROM {TableName} WHERE {ColumnsData[0]} = '{dbData[0]}'";
                 for (int i = 1; i < ColumnsData.Length; i++)
                 {
-                    Server.ServerInterface.FormsManaging.TextGenerator(ColumnsData[i]);
+                    //Server.ServerInterface.FormsManaging.TextGenerator(ColumnsData[i]);
                     command += $" AND {ColumnsData[i]} = '{dbData[i]}'";
                 }
             }
@@ -31,6 +31,20 @@ namespace ServerTest.Database.DataTypes
             {
                 Server.ServerInterface.FormsManaging.TextGenerator(ex.ToString());
             }
+            return command;
+        }
+
+        public static string SelectCount(string TableName)
+        {
+            string command = null;
+            command = $"SELECT COUNT(*) FROM {TableName}";
+            return command;
+        }
+
+        public static string SelectData(string attributes, string TableName, string sortBy)
+        {
+            string command = null;
+            command = $"SELECT {attributes} FROM {TableName} ORDER BY {sortBy} DESC";
             return command;
         }
     }
