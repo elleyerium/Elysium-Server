@@ -12,8 +12,9 @@ namespace ServerTest.Database
 {
     public class RequestToDB
     {
-        public static void CreateRequest(string requestMessage) //this func sending request to database.
+        public static string CreateRequest(string requestMessage, string tag) //this func sending request to database.
         {
+            string Responce = null;
             DatabaseConnector.ConnectToDB();
             try
             {
@@ -22,13 +23,9 @@ namespace ServerTest.Database
                 sqlCommand.CommandText = requestMessage;
                 DatabaseConnector.sqlConnection.Open();
                 Reader = sqlCommand.ExecuteReader();
-                if(Reader.HasRows)
-                    FormsManaging.TextGenerator("user logged in!");
-                else
-                    FormsManaging.TextGenerator("failed to login");
-
+                Responce = ResponceFromDB.GetResponce(Reader, tag);
                 DatabaseConnector.sqlConnection.Close();
-                //FormsManaging.TextGenerator($"{requestMessage} as request has been created!");
+
             }
             catch (MySqlException exception)
             {
@@ -36,12 +33,15 @@ namespace ServerTest.Database
                 FormsManaging.TextGenerator(exception.ToString());
             }
 
+            return Responce;
+
         }
         public static string ExecuteResponce(MySqlException exception) //Get responce using MySql exception.
         {
-            var result = ResponceFromDB.GetResponce(exception);
+            var result = ResponceFromDB.GetException(exception);
             return result;
         }
+
     }
 }
 
