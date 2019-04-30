@@ -19,7 +19,7 @@ namespace ServerTest.Server.Auth
             try
             {
                 var req = INSERT.InsertRequest("users", Items.GetRegisterList(), Items.SetRegisterList(data));
-                RequestToDB.CreateRequest(req);
+                RequestToDB.CreateRequest(req, "RegistrationRequest");
             }
 
             catch (Exception ex)

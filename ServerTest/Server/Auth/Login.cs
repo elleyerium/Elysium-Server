@@ -18,7 +18,7 @@ namespace ServerTest.Server.Auth
             try
             {
                 var req = SELECT.SelectLoginRequest("*","users", Items.GetLoginList(), Items.SetLoginList(data));
-                RequestToDB.CreateRequest(req);
+                RequestToDB.CreateRequest(req, "LoginRequest");
             }
             catch (Exception ex)
             {

@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
-using TPJ.Encrypt.Models;
 
 namespace ServerTest.Server.Connector
 {

@@ -51,7 +51,8 @@ namespace ServerTest.Server.Connector
             byte[] bufferreceive = new byte[client.ReceiveBufferSize];
             int bytesRead = nwStream.Read(bufferreceive, 0, client.ReceiveBufferSize);
             string dataReceived = Encoding.ASCII.GetString(bufferreceive,0,bytesRead);
-            ClientAction.Action(dataReceived);
+            string CreateAction = ClientAction.Action(dataReceived);
+            ServerResponces.SendResponse(client, CreateAction);
             client.Close();
             listener.Stop();
         }
