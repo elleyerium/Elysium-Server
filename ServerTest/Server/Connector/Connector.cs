@@ -14,8 +14,9 @@ namespace ServerTest.Server.Connector
     class Connector
     {
         public const int PORT_NO = 5000;
-        public const string SERVER_IP = "127.0.0.1";
+        public const string SERVER_IP = "192.168.0.106";
         public static TcpListener listener;
+        public static TcpClient client;
 
         [STAThread]
         static void Main()
@@ -46,13 +47,13 @@ namespace ServerTest.Server.Connector
         {
             Task sync = new Task(action: listener.Start);
             listener.Start();
-            TcpClient client = await listener.AcceptTcpClientAsync();
+            client = await listener.AcceptTcpClientAsync();
+            FormsManaging.TextGenerator(client.Client.RemoteEndPoint.ToString());
             NetworkStream nwStream = client.GetStream();
             byte[] bufferreceive = new byte[client.ReceiveBufferSize];
             int bytesRead = nwStream.Read(bufferreceive, 0, client.ReceiveBufferSize);
             string dataReceived = Encoding.ASCII.GetString(bufferreceive,0,bytesRead);
             string CreateAction = ClientAction.Action(dataReceived);
-            ServerResponces.SendResponse(client, CreateAction);
             client.Close();
             listener.Stop();
         }

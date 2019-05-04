@@ -18,7 +18,7 @@ namespace ServerTest.Server.Connector
             string[] DataArray = ReceivedData.Split('|');
             string request = DataArray.Last();
             string Tag = DataArray.First();
-            string responce = "1";
+            string responce = null;
             try
             {
                 switch (Tag)

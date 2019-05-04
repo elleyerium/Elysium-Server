@@ -12,36 +12,34 @@ namespace ServerTest.Database
 {
     public class RequestToDB
     {
-        public static string CreateRequest(string requestMessage, string tag) //this func sending request to database.
-        {
+         public static string CreateRequest(string requestMessage, string tag)
+         {
             string Responce = null;
             DatabaseConnector.ConnectToDB();
-            try
-            {
+              try
+              {
                 MySqlCommand sqlCommand = DatabaseConnector.sqlConnection.CreateCommand();
                 MySqlDataReader Reader;
                 sqlCommand.CommandText = requestMessage;
                 DatabaseConnector.sqlConnection.Open();
                 Reader = sqlCommand.ExecuteReader();
-                Responce = ResponceFromDB.GetResponce(Reader, tag);
+                ResponceFromDB.GetResponce(Reader, tag);
                 DatabaseConnector.sqlConnection.Close();
 
-            }
-            catch (MySqlException exception)
-            {
+              }
+              catch (MySqlException exception)
+              {
                 ExecuteResponce(exception);
                 FormsManaging.TextGenerator(exception.ToString());
-            }
-
+              }
             return Responce;
-
-        }
-        public static string ExecuteResponce(MySqlException exception) //Get responce using MySql exception.
-        {
+         }
+        
+         public static string ExecuteResponce(MySqlException exception)
+         {
             var result = ResponceFromDB.GetException(exception);
             return result;
-        }
-
+         }
     }
 }
 

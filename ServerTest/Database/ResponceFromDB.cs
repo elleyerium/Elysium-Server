@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
+using System.Net.Sockets;
 using ServerTest.Server.ServerInterface;
+using ServerTest.Server.Connector;
 using ServerTest.Database.DataTypes;
 using Newtonsoft.Json;
 
@@ -25,28 +27,41 @@ namespace ServerTest.Database
                     Responce = "Username or email already used.";
                     break;
                 default:
-                    Responce = "There aren't any exceptions!";
+                    Responce = "Registered!";
                     break;
             }
             FormsManaging.TextGenerator(Responce);
             return Responce;
         }
 
-        public static string GetResponce(MySqlDataReader Reader, string Tag)
+        public static void GetResponce(MySqlDataReader Reader, string Tag)
         {
+            TcpClient client = new TcpClient();
+            client = Connector.client;
             string Return = null;
             string data = Tag;
             Reader.Read();
             switch (data)
             {
                 case "RegistrationRequest":
+                    int dataAffected = Reader.RecordsAffected;
+                    if (dataAffected > 0)
+                    {
+                        ServerResponces.SendResponse(client, "Registered");
+                        FormsManaging.TextGenerator("Registered");
+                    }
+                    else if(dataAffected == 0)
+                    {
+                        ServerResponces.SendResponse(client, "Failed to register!");
+                        FormsManaging.TextGenerator("failed");
+                    }
                     break;
 
                 case "LoginRequest":
                     if (Reader.HasRows)
-                        FormsManaging.TextGenerator("user logged in!");
+                       ServerResponces.SendResponse(client, "logged in!");
                     else if (!Reader.HasRows)
-                        FormsManaging.TextGenerator("failed to login");
+                       ServerResponces.SendResponse(client, "Failed to login!");
                     break;
 
                 case "GetLeaderboardsRequest":
@@ -58,7 +73,7 @@ namespace ServerTest.Database
                     }
 
                     var clear = Return.Remove(Return.LastIndexOf('|'));
-                    FormsManaging.TextGenerator(Return);
+                    ServerResponces.SendResponse(client, Return);
                     break;
 
                 case "GetScoreRequest":
@@ -66,8 +81,10 @@ namespace ServerTest.Database
 
                 case "SetScoreRequest":
                     break;
+                default:
+                    Return = "have no request like this";
+                    break;
             }
-            return Return;
         }
     }
 }
