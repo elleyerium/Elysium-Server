@@ -13,7 +13,7 @@ namespace ServerTest.Server.Connector
 {
     class Connector
     {
-        public const int PORT_NO = 5000;
+        public const int PORT_NO = 27015;
         public const string SERVER_IP = "192.168.0.106";
         public static TcpListener listener;
         public static TcpClient client;
@@ -30,7 +30,7 @@ namespace ServerTest.Server.Connector
         public static async void ServerStart()
         {
             FormsManaging.TextGenerator("Server started.");
-            IPAddress localAdd = IPAddress.Parse(SERVER_IP);
+            IPAddress localAdd = IPAddress.Any;
             listener = new TcpListener(localAdd, PORT_NO);
             FormsManaging.TextGenerator("Listening...");
             //RequestToDB.CreateRequest("ALTER TABLE users ADD regTime TIMESTAMP DEFAULT NOW()");
