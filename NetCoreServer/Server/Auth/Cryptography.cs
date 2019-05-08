@@ -12,7 +12,7 @@ namespace NetCoreServer.Server.Auth
     {
         public static string DecryptString(string key, string cipherText)
         {
-            byte[] iv = new byte[16];
+            byte[] iv = new byte[16];//me
             byte[] buffer = Convert.FromBase64String(cipherText);
 
             using (Aes aes = Aes.Create())
