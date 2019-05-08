@@ -24,7 +24,7 @@ namespace ServerTest.User.PlayerStatistics
 
         public static void SetUserScores(string data)
         {
-            var request = INSERT.InsertRequest($"scores", "score", data);
+            var request = INSERT.InsertRequest("scores", "score", data);
             RequestToDB.CreateRequest(request,"SetScoreRequest");
         }
     }

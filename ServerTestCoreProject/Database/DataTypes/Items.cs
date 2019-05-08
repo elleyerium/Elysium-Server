@@ -22,15 +22,15 @@ namespace ServerTest.Database.DataTypes
         {
             allIndex = data.Split(' ');
             var username = allIndex[0];
-            var EncryptedPass = allIndex[1];
+            var encryptedPass = allIndex[1];
             var email = allIndex[2];
-            var ans = $"{username} {EncryptedPass} {email}";
+            var ans = $"{username} {encryptedPass} {email}";
             return ans;
         }
 
         public static string GetLoginList()
         {
-            string data = ("username, password");
+            var data = "username, password";
             return data;
         }
 
@@ -45,7 +45,7 @@ namespace ServerTest.Database.DataTypes
         public static string GetScoreList(string data)
         {
             string username = data.Split(' ')[0];
-            ServerTest.Server.ServerInterface.FormsManaging.TextGenerator(username);
+            FormsManaging.TextGenerator(username);
             return username;
         }
         public static string SetUserScore(string data)

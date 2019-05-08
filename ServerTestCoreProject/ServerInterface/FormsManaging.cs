@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using ServerTest.Database;
 
 namespace ServerTest.Server.ServerInterface
 {
 
     public class FormsManaging
     {
-        public static int size;
-        public static TextBox TextGenerator(string Message)
+        public static int Size;
+        public static void TextGenerator(string Message)
         {
 
-            TextBox text = new TextBox();
+            Console.WriteLine(DateTime.Now + $" /tried '{Message}'");
+            /*TextBox text = new TextBox();
             text.Text = $"{DateTime.Now.ToString()} ---> {Message}";
             text.Size = text.GetPreferredSize(text.Size);
             text.Anchor = AnchorStyles.Left;
@@ -25,10 +24,7 @@ namespace ServerTest.Server.ServerInterface
             //text.Size = size;
             text.ReadOnly = true;
             text.BorderStyle = BorderStyle.None;
-            TextToList(text);
-            return text;
-
+            TextToList(text);*/
         }
-        public static void TextToList(TextBox text) => UI.MessangerPanel.Controls.Add(text);
     }
 }
