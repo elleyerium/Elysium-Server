@@ -8,7 +8,10 @@ namespace NetCoreServer
         static void Main(string[] args)
         {
             Connector.ServerStart();
-            Console.ReadKey();
+            while (true)
+            {
+             Console.ReadKey();
+            }
         }
     }
 }
