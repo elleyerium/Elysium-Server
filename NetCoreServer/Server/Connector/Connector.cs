@@ -13,7 +13,7 @@ namespace NetCoreServer.Server.Connector
     class Connector
     {
         public const int PORT_NO = 27015;
-        public const string SERVER_IP = "127.0.0.1";
+        public const string SERVER_IP = "10.0.2.15";
         public static TcpListener listener;
         public static TcpClient client;
 
