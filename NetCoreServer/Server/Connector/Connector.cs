@@ -36,6 +36,7 @@ namespace NetCoreServer.Server.Connector
             Task sync = new Task(action: listener.Start);
             listener.Start();
             client = await listener.AcceptTcpClientAsync();
+            FormsManaging.TextGenerator("Synced");
             FormsManaging.TextGenerator(client.Client.RemoteEndPoint.ToString());
             NetworkStream nwStream = client.GetStream();
             byte[] bufferreceive = new byte[client.ReceiveBufferSize];
