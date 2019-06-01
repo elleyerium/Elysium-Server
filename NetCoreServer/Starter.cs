@@ -3,14 +3,15 @@ using NetCoreServer.Server.Connector;
 
 namespace NetCoreServer
 {
-    class Starter  
+    class Starter
     {
         static void Main(string[] args)
         {
-            Connector.ServerStart();
+            Connector connector = new Connector();
+            connector.ServerStart();
             while (true)
             {
-             Console.ReadKey();
+            Console.Read();
             }
         }
     }
