@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 using NetCoreServer.Server.ClientData;
 using NetCoreServer.Database;
 using NetCoreServer.Database.DataTypes;
-using NetCoreServer.Server.ServerInterface;
+using NetCoreServer.ServerInterface;
 using MySql.Data.MySqlClient;
 
 namespace NetCoreServer.Server.Auth
 {
     class Login
     {
-        public static void Auth(string data)
+        public static void Auth(string data, int ID)
         {
             try
             {
                 var req = SELECT.SelectLoginRequest("*","users", Items.GetLoginList(), Items.SetLoginList(data));
-                RequestToDB.CreateRequest(req, "LoginRequest");
+                RequestToDB.CreateRequest(req, "LoginRequest", ID);
             }
             catch (Exception ex)
             {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetCoreServer.Server.ServerInterface
+namespace NetCoreServer.ServerInterface
 {
 
     public class FormsManaging

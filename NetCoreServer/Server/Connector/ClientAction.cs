@@ -1,45 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NetCoreServer.Database;
 using NetCoreServer.Database.DataTypes;
 using NetCoreServer.Server.Auth;
-using NetCoreServer.User.PlayerStatistics;
+using NetCoreServer.Server.User.PlayerStatistics;
 using NetCoreServer.Server.User.Leaderboards;
+using NetCoreServer.ServerInterface;
 
 namespace NetCoreServer.Server.Connector
 {
     class ClientAction
     {
-        public static string Action(string ReceivedData)
+        public void Action(string ReceivedData, int id)
         {
             string[] DataArray = ReceivedData.Split('|');
             string request = DataArray.Last();
             string Tag = DataArray.First();
-            string responce = null;
             try
             {
                 switch (Tag)
                 {
                     case "RegistrationRequest":
-                        Register.RegisterProfile(DataArray.Last());
-                        Scores.CreateTable(Items.GetScoreList(request));
+                        Register.RegisterProfile(DataArray.Last(), id);
+                        Scores.CreateTable(Items.GetScoreList(request), id);
                         break;
                     case "LoginRequest":
-                        Login.Auth(DataArray.Last());
+                        Login.Auth(DataArray.Last(),id);
                         break;
                     case "SetScoreRequest":
-                        Scores.SetUserScores(request);
+                        Scores.SetUserScores(request, id);
                         break;
                     case "GetScoreRequest":
-                        Scores.GetUserScores(Items.GetScoreList(request));
+                        Scores.GetUserScores(Items.GetScoreList(request),id);
                         break;
                     case "GetPlayerStatsPosition":
                         break;
                     case "GetLeaderboardsRequest":
-                        responce = MainLeaderboard.RequestLeaderboards();
+                        MainLeaderboard.RequestLeaderboards(id);
+                        break;
+                    case "GetClientID" :
+                        ServerResponces.SendResponse(Connector.Clients[id], id.ToString());
                         break;
                     default:
                         throw new Exception(Tag);
@@ -47,9 +51,8 @@ namespace NetCoreServer.Server.Connector
             }
             catch (Exception ex)
             {
-                ServerInterface.FormsManaging.TextGenerator(ex.ToString());
+                FormsManaging.TextGenerator(ex.ToString());
             }
-            return responce;
         }
     }
 }

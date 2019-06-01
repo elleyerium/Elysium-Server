@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using NetCoreServer.Server;
-using NetCoreServer.Server.ServerInterface;
+using NetCoreServer.ServerInterface;
 
 namespace NetCoreServer.Database.DataTypes
 {

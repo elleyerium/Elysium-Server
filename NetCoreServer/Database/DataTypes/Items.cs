@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NetCoreServer.Server.Auth;
-using NetCoreServer.Server.ServerInterface;
+using NetCoreServer.ServerInterface;
 
 namespace NetCoreServer.Database.DataTypes
 {
     class Items
     {
-        public static string[] allIndex = new string[3];
+        public static string[] allIndex = new string[4];
 
         public static string GetRegisterList()
         {
@@ -36,6 +36,7 @@ namespace NetCoreServer.Database.DataTypes
 
         public static string SetLoginList(string data)
         {
+            FormsManaging.TextGenerator(allIndex[0]);
             allIndex = data.Split(' ');
             var username = allIndex[0];
             var password = allIndex[1];

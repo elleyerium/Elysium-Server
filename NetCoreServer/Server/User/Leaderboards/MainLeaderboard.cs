@@ -5,24 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 using NetCoreServer.Database.DataTypes;
 using NetCoreServer.Database;
-using NetCoreServer.Server.ServerInterface;
-using MySql.Data.MySqlClient;
+using NetCoreServer.ServerInterface;
 
 namespace NetCoreServer.Server.User.Leaderboards
 {
     class MainLeaderboard
     {
-        public static string RequestLeaderboards()
+        public static string RequestLeaderboards(int id)
         {
-            string count = RequestToDB.CreateRequest(SELECT.SelectData("*", "scores", "score"), "GetLeaderboardsRequest");
+            SELECT Select = new SELECT();
+            string count = RequestToDB.CreateRequest(Select.SelectData("*", "scores", "score"), "GetLeaderboardsRequest", id);
             int CountOfItems = count.Split(' ').Count();
             List <LeaderList> result = new List<LeaderList>(CountOfItems);
             for (int i = 0; i < result.Capacity; i++)
             {
-                result.Add(new LeaderList() { data = count });
+                result.Add(new LeaderList { data = count });
             }
-            var responce = count;
-            return responce;
+            return count;
         }
     }
 
