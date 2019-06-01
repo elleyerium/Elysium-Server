@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using System.Net.Sockets;
-using NetCoreServer.Server.ServerInterface;
+using NetCoreServer.ServerInterface;
+using NetCoreServer.Server.Connector;
 using NetCoreServer.Server.Connector;
 using NetCoreServer.Database.DataTypes;
 using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace NetCoreServer.Database
         {
             //JsonSerializer serializer = new JsonSerializer();
             //serializer.Serialize()
-            
+
             int exceptionNumber = exception.Number;
             string Responce = null;
             switch (exceptionNumber)
@@ -34,11 +35,10 @@ namespace NetCoreServer.Database
             return Responce;
         }
 
-        public static void GetResponce(MySqlDataReader Reader, string Tag)
+        public static void GetResponce(MySqlDataReader Reader, string Tag, int currID)
         {
-            TcpClient client = new TcpClient();
-            client = Connector.client;
-            string Return = null;
+            TcpClient client = Connector.Clients[currID];
+            string Return;
             string data = Tag;
             Reader.Read();
             switch (data)
@@ -65,14 +65,13 @@ namespace NetCoreServer.Database
                     break;
 
                 case "GetLeaderboardsRequest":
-                    Return = $"{Reader["username"].ToString()},{Reader["score"].ToString()}|";
+                    Return = $"{Reader["username"]},{Reader["score"]}|";
                     while (Reader.Read())
                     {
-                        Return += $"{Reader["username"].ToString()},{Reader["score"].ToString()}|";
+                        Return += $"{Reader["username"]},{Reader["score"]}|";
                         FormsManaging.TextGenerator(Return);
                     }
 
-                    var clear = Return.Remove(Return.LastIndexOf('|'));
                     ServerResponces.SendResponse(client, Return);
                     break;
 
