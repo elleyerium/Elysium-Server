@@ -15,7 +15,7 @@ namespace NetCoreServer.Server.Connector
         {
             NetworkStream stream = client.GetStream();
             byte[] responce = Encoding.ASCII.GetBytes(Message);
-            stream.Write(responce, 0, responce.Length);
+            stream.WriteAsync(responce, 0, responce.Length);
         }
     }
 }

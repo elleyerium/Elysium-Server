@@ -16,5 +16,11 @@ namespace NetCoreServer.Database.DataTypes
             GetScoreRequest = 3,
             GetLeaderboardsRequest = 4
         }
+
+        public enum Chat
+        {
+            CreateChannel = 0,
+            SendMessage = 1,     
+        }
     }
 }
