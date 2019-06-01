@@ -18,34 +18,23 @@ namespace NetCoreServer.Database.DataTypes
                 string[] dbData = new string[data.Split(' ').Count()];
                 dbData = data.Split(' ');
                 ColumnsData = columns.Split(',');
-                
+
 
                 command = $"SELECT {attribute} FROM {TableName} WHERE {ColumnsData[0]} = '{dbData[0]}'";
                 for (int i = 1; i < ColumnsData.Length; i++)
                 {
-                    //Server.ServerInterface.FormsManaging.TextGenerator(ColumnsData[i]);
                     command += $" AND {ColumnsData[i]} = '{dbData[i]}'";
                 }
             }
             catch (Exception ex)
             {
-                Server.ServerInterface.FormsManaging.TextGenerator(ex.ToString());
+                ServerInterface.FormsManaging.TextGenerator(ex.ToString());
             }
             return command;
         }
-
-        public static string SelectCount(string TableName)
+        public string SelectData(string attributes, string TableName, string sortBy)
         {
-            string command = null;
-            command = $"SELECT COUNT(*) FROM {TableName}";
-            return command;
-        }
-
-        public static string SelectData(string attributes, string TableName, string sortBy)
-        {
-            string command = null;
-            command = $"SELECT {attributes} FROM {TableName} ORDER BY {sortBy} DESC";
-            return command;
+            return $"SELECT {attributes} FROM {TableName} ORDER BY {sortBy} DESC";
         }
     }
 }

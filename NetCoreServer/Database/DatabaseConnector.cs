@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
+using NetCoreServer.ServerInterface;
 
 namespace NetCoreServer.Database
 {
@@ -14,8 +15,7 @@ namespace NetCoreServer.Database
 
         public static void ConnectToDB()
         {
-            sqlConnection = new MySqlConnection("Server=localhost;Database=DataBase;Uid=root;Pwd=34etehuh121;");   
+            sqlConnection = new MySqlConnection("Server=localhost;Database=database;Uid=root;Pwd=34etehuh121;");
         }
-        
     }
 }
