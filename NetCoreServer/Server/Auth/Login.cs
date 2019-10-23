@@ -13,12 +13,12 @@ namespace NetCoreServer.Server.Auth
 {
     class Login
     {
-        public static void Auth(string data, int ID)
+        public static void Auth(DatabaseProvider provider, string data, int Id)
         {
             try
             {
                 var req = SELECT.SelectLoginRequest("*","users", Items.GetLoginList(), Items.SetLoginList(data));
-                RequestToDB.CreateRequest(req, "LoginRequest", ID);
+                //RequestToDB.CreateRequest(provider, "LoginRequest", Id);
             }
             catch (Exception ex)
             {

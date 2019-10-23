@@ -11,11 +11,10 @@ namespace NetCoreServer.Server.Connector
 {
     class ServerResponces
     {
-        public static void SendResponse(TcpClient client, string Message)
+        public static void SendResponse(TcpClient client, byte[] data)
         {
-            NetworkStream stream = client.GetStream();
-            byte[] responce = Encoding.ASCII.GetBytes(Message);
-            stream.WriteAsync(responce, 0, responce.Length);
+            var stream = client.GetStream();
+            stream.WriteAsync(data, 0, data.Length);
         }
     }
 }

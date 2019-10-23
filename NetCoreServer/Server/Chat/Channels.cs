@@ -8,5 +8,6 @@ namespace NetCoreServer.Server.Chat
 {
     class Channels
     {
+
     }
 }

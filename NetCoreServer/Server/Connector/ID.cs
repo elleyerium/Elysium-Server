@@ -28,7 +28,7 @@ namespace NetCoreServer.Server.Connector
 
         private static int RandomizeId()
         {
-            Random random = new Random();
+            var random = new Random();
             var value = random.Next(0, 100000);
             return value;
         }

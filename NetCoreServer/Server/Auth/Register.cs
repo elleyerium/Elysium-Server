@@ -17,7 +17,7 @@ namespace NetCoreServer.Server.Auth
             try
             {
               var req = INSERT.InsertRequest("users", Items.GetRegisterList(), Items.SetRegisterList(data));
-              RequestToDB.CreateRequest(req, "RegistrationRequest", ID);
+              //RequestToDB.CreateRequest(req, "RegistrationRequest", ID);
             }
 
             catch (Exception ex)

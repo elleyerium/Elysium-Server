@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,9 +14,9 @@ using Newtonsoft.Json;
 
 namespace NetCoreServer.Database
 {
-    static class ResponceFromDB
+    public class ResponseFromDB
     {
-        public static string GetException(MySqlException exception)
+        public string GetException(MySqlException exception)
         {
             //JsonSerializer serializer = new JsonSerializer();
             //serializer.Serialize()
@@ -35,55 +36,70 @@ namespace NetCoreServer.Database
             return Responce;
         }
 
-        public static void GetResponce(MySqlDataReader Reader, string Tag, int currID)
+        /*public string GetResponse(MySqlDataReader reader, byte[] data, int currID)
         {
-            TcpClient client = Connector.Clients[currID];
-            string Return;
-            string data = Tag;
-            Reader.Read();
-            switch (data)
+            byte response;
+            reader.Read();
+            using(var memoryStream = new MemoryStream())
             {
-                case "RegistrationRequest":
-                    int dataAffected = Reader.RecordsAffected;
-                    if (dataAffected > 0)
+                using (var writer = new BinaryWriter(memoryStream))
+                {
+                    var first = new BinaryReader(new MemoryStream()).ReadByte();
+                    switch (first)
                     {
-                        ServerResponces.SendResponse(client, "Registered");
-                        FormsManaging.TextGenerator("Registered");
+                        case 1:
+                            if (reader.HasRows)
+                            {
+                                writer.Write((byte)0);
+                                //ServerResponces.SendResponse(client, memoryStream.ToArray());
+                            }
+                            else if (!reader.HasRows)
+                            {
+                                writer.Write((byte)1);
+                                //ServerResponces.SendResponse(client, memoryStream.ToArray());
+                            }
+                            break;
+
+                        case 5:
+                            writer.Write((byte)6);
+                            var dataAffected = reader.RecordsAffected;
+                            if (dataAffected > 0)
+                            {
+                                writer.Write((byte)0);
+                                //ServerResponces.SendResponse(client, memoryStream.ToArray());
+                                FormsManaging.TextGenerator("Registered");
+                            }
+                            else if (dataAffected == 0)
+                            {
+                                writer.Write((byte)1);
+                                //ServerResponces.SendResponse(client, memoryStream.ToArray());
+                                FormsManaging.TextGenerator("failed");
+                            }
+                            break;
+
+                        /*case "GetLeaderboardsRequest":
+                            Return = $"{reader["username"]},{reader["score"]}|";
+                            while (reader.Read())
+                            {
+                                Return += $"{reader["username"]},{reader["score"]}|";
+                                FormsManaging.TextGenerator(Return);
+                            }
+
+                            //ServerResponces.SendResponse(client, Return);
+                            break;
+
+                        case "GetScoreRequest":
+                            break;
+
+                        case "SetScoreRequest":
+                            break;
+                            #1#
+                        default:
+                            return "have no request like this";
+                            break;
                     }
-                    else if(dataAffected == 0)
-                    {
-                        ServerResponces.SendResponse(client, "Failed to register!");
-                        FormsManaging.TextGenerator("failed");
-                    }
-                    break;
-
-                case "LoginRequest":
-                    if (Reader.HasRows)
-                       ServerResponces.SendResponse(client, "logged in!");
-                    else if (!Reader.HasRows)
-                       ServerResponces.SendResponse(client, "Failed to login!");
-                    break;
-
-                case "GetLeaderboardsRequest":
-                    Return = $"{Reader["username"]},{Reader["score"]}|";
-                    while (Reader.Read())
-                    {
-                        Return += $"{Reader["username"]},{Reader["score"]}|";
-                        FormsManaging.TextGenerator(Return);
-                    }
-
-                    ServerResponces.SendResponse(client, Return);
-                    break;
-
-                case "GetScoreRequest":
-                    break;
-
-                case "SetScoreRequest":
-                    break;
-                default:
-                    Return = "have no request like this";
-                    break;
+                }
             }
-        }
+        }*/
     }
 }

@@ -13,34 +13,35 @@ namespace NetCoreServer.Database
 {
     public class RequestToDB
     {
-         public static string CreateRequest(string requestMessage, string tag, int ID)
+         public string CreateRequest(DatabaseProvider databaseProvider, string requestMessage, string tag, int ID)
          {
             string Responce = null;
-            //DatabaseConnector.ConnectToDB();
+
               try
               {
-                MySqlCommand sqlCommand = DatabaseConnector.sqlConnection.CreateCommand();
-                MySqlDataReader Reader;
+                var sqlCommand = databaseProvider.SqlConnection.CreateCommand();
+                MySqlDataReader reader;
                 sqlCommand.CommandText = requestMessage;
-                DatabaseConnector.sqlConnection.Open();
-                Reader = sqlCommand.ExecuteReader();
-                ResponceFromDB.GetResponce(Reader, tag, ID);
-                DatabaseConnector.sqlConnection.Close();
+                databaseProvider.SqlConnection.Open();
+                reader = sqlCommand.ExecuteReader();
+                //databaseProvider.ResponceFromDb.GetResponse(reader, tag, ID);
+                //DatabaseConnector.sqlConnection.Close();
 
               }
               catch (MySqlException exception)
               {
-                ExecuteResponce(exception);
+                //ExecuteResponce(exception);
                 FormsManaging.TextGenerator(exception.ToString());
               }
+
             return Responce;
          }
 
-         public static string ExecuteResponce(MySqlException exception)
+         /*public string ExecuteResponse(MySqlException exception)
          {
             var result = ResponceFromDB.GetException(exception);
             return result;
-         }
+         }*/
     }
 }
 

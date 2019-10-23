@@ -9,4 +9,8 @@
       <PackageReference Include="MySql.Data" Version="8.0.16" />
       <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Server\Multiplayer\Ranking" />
+      <Folder Include="Server\Multiplayer\World" />
+    </ItemGroup>
 </Project>

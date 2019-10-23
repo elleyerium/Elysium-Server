@@ -7,11 +7,11 @@ namespace NetCoreServer
     {
         static void Main(string[] args)
         {
-            Connector connector = new Connector();
+            var connector = new Connector();
             connector.ServerStart();
             while (true)
             {
-            Console.Read();
+               Console.Read();
             }
         }
     }
