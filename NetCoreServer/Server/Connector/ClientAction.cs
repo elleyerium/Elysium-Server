@@ -12,27 +12,33 @@ using NetCoreServer.Server.Multiplayer.Leaderboards;
 using NetCoreServer.Server.User;
 using NetCoreServer.Server.User.PlayerStatistics;
 using NetCoreServer.ServerInterface;
+
 namespace NetCoreServer.Server.Connector
 {
     class ClientAction
     {
-        public void Action(byte[] receivedData, Connector connector, int id)
+        public void Action(byte[] receivedData, ConnectionProvider connectionProvider, int id)
         {
             using (var reader = new BinaryReader(new MemoryStream(receivedData)))
             {
                 try
                 {
                     var first = reader.ReadByte();
+                    FormsManaging.TextGenerator(first.ToString());
                     switch (first)
                     {
                         case 1:
-                            var uname = reader.ReadString();
-                            //Login.Auth(uname, id);
-                            //connector.Holder.List.Add(new Player(new PlayerAccountInfo(uname), new PlayerMultiplayerInfo()));
+                            var username = reader.ReadString();
+                            var pass = reader.ReadString();
+                            var token = reader.ReadString();
+                            FormsManaging.TextGenerator(token);
+                            connectionProvider.AuthProv.Login(username, pass, token);
                             break;
                         case 5:
-                            Register.RegisterProfile(reader.ReadString(), id);
-                            Scores.CreateTable(Items.GetScoreList(reader.ReadString()), id);
+                            var regUsername = reader.ReadString();
+                            var regEmail = reader.ReadString();
+                            var regPass = reader.ReadString();
+                            connectionProvider.AuthProv.CreateAccount(regUsername, regEmail, regPass);
                             break;
                         /*case "GetScoreRequest":
                             Scores.GetUserScores(Items.GetScoreList(request), id);

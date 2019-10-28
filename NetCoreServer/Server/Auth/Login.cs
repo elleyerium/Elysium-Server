@@ -11,19 +11,8 @@ using MySql.Data.MySqlClient;
 
 namespace NetCoreServer.Server.Auth
 {
-    class Login
+    internal class Login
     {
-        public static void Auth(DatabaseProvider provider, string data, int Id)
-        {
-            try
-            {
-                var req = SELECT.SelectLoginRequest("*","users", Items.GetLoginList(), Items.SetLoginList(data));
-                //RequestToDB.CreateRequest(provider, "LoginRequest", Id);
-            }
-            catch (Exception ex)
-            {
-                FormsManaging.TextGenerator(ex.ToString());
-            }
-        }
+
     }
 }

@@ -9,21 +9,21 @@ namespace NetCoreServer.Database.DataTypes
     class SELECT
     {
         //public static string command;
-        public static string SelectLoginRequest(string attribute, string TableName, string columns, string data)
+        public static string SelectLoginRequest(string attribute, string tableName, string columns, string data)
         {
             string command = null;
             try
             {
-                string[] ColumnsData = new string[columns.Split(' ').Count()];
-                string[] dbData = new string[data.Split(' ').Count()];
+                var columnsData = new string[columns.Split(' ').Length];
+                var dbData = new string[data.Split(' ').Length];
                 dbData = data.Split(' ');
-                ColumnsData = columns.Split(',');
+                columnsData = columns.Split(',');
 
 
-                command = $"SELECT {attribute} FROM {TableName} WHERE {ColumnsData[0]} = '{dbData[0]}'";
-                for (int i = 1; i < ColumnsData.Length; i++)
+                command = $"SELECT {attribute} FROM {tableName} WHERE {columnsData[0]} = '{dbData[0]}'";
+                for (var i = 1; i < columnsData.Length; i++)
                 {
-                    command += $" AND {ColumnsData[i]} = '{dbData[i]}'";
+                    command += $" AND {columnsData[i]} = '{dbData[i]}'";
                 }
             }
             catch (Exception ex)

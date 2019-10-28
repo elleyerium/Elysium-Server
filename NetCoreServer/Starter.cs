@@ -7,8 +7,8 @@ namespace NetCoreServer
     {
         static void Main(string[] args)
         {
-            var connector = new Connector();
-            connector.ServerStart();
+            var connectionProvider = new ConnectionProvider();
+            _ = connectionProvider.ServerStart();
             while (true)
             {
                Console.Read();
