@@ -7,9 +7,9 @@ namespace NetCoreServer.Server.User
     public class PlayerAccountInfo
     {
         internal string Username;
-        internal Guid Token;
+        internal string Token;
 
-        public PlayerAccountInfo(string uname, Guid token)
+        public PlayerAccountInfo(string uname, string token)
         {
             Username = uname;
             Token = token;

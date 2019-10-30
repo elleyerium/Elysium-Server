@@ -36,7 +36,7 @@ namespace NetCoreServer.Server.Connector
             };
 
             DbaseProvider.ConnectToDB();
-            AuthProv = new AuthProvider()
+            AuthProv = new AuthProvider
             {
                 ConnectionProv = this
             };
@@ -69,25 +69,12 @@ namespace NetCoreServer.Server.Connector
             FormsManaging.TextGenerator("Read");
             CreateAction(buffer, 0);
             FormsManaging.TextGenerator("Action created");
-            /*var nwStream = Players.FirstOrDefault(x => x.)GetStream();
-            var bufferReceive = new byte[Players[id].Client.ReceiveBufferSize];
-            var bytesRead = nwStream.Read(bufferReceive, 0, Players[id].ReceiveBufferSize);
-            var action = CreateAction(bufferReceive, id);*/ //TODO: fix
-
-            /*if (Clients[id].Connected)
-            {
-                await AlreadyConnected(id);
-            }
-            else
-            {
-                Clients.Remove(Clients[id]);
-            }*/
         }
 
         private void CreateAction(byte[] data, int id)
         {
-            var action = new ClientAction();
-            action.Action(data, this, id);
+            var handler = new ServerHandler();
+            handler.HandleClientData(data, this, id);
         }
 
         public void BroadcastData()
