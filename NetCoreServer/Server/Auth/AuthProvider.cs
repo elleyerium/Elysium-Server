@@ -1,27 +1,19 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using NetCoreServer.Database;
 using NetCoreServer.Database.DataTypes;
 using NetCoreServer.Server.Connector;
+using NetCoreServer.Server.User;
+using NetCoreServer.Server.User.PlayerStatistics;
 using NetCoreServer.ServerInterface;
 
 namespace NetCoreServer.Server.Auth
 {
     public class AuthProvider
     {
-        internal Login LoginInstanse;
-        internal Register RegisterInstanse;
         internal ConnectionProvider ConnectionProv;
-        internal Token TokenProvider;
-
-        public AuthProvider()
-        {
-            LoginInstanse = new Login();
-            RegisterInstanse = new Register();
-
-            //TokenProvider = new Token();
-        }
 
         public void Login(string username, string password, string token)
         {
@@ -42,10 +34,11 @@ namespace NetCoreServer.Server.Auth
                                 break;
                             case 1:
                                 FormsManaging.TextGenerator($"{username} logged in!");
+                                ConnectionProv.Players.Add(new Player(new PlayerAccountInfo(username, token), new PlayerMultiplayerInfo()));
                                 break;
                         }
                     }
-                }//SELECT.SelectLoginRequest("*", "users", Items.GetLoginList(), Items.SetLoginList(data));
+                }
             }
             catch (NullReferenceException ex)
             {
@@ -60,7 +53,6 @@ namespace NetCoreServer.Server.Auth
                 var req =
                     $"INSERT INTO users (username, password, email, regTime, token) VALUES ({username}, {password}, {email}" +
                     $", {DateTime.Now.ToString("s")}, {Guid.NewGuid().ToString()})";//INSERT.InsertRequest("users", Items.GetRegisterList(), Items.SetRegisterList(data));
-                //ConnectionProv.DbaseProvider.Request(req);
                 DatabaseProvider.CreateRequest(ConnectionProv.DbaseProvider, req);
             }
 
@@ -68,6 +60,12 @@ namespace NetCoreServer.Server.Auth
             {
                 FormsManaging.TextGenerator(ex.ToString());
             }
+        }
+
+        public void LogOut(string token)
+        {
+            ConnectionProv.Players.Remove(ConnectionProv.Players.FirstOrDefault(x => x.AccountInfo.Token == token));
+            DatabaseProvider.CreateRequest(ConnectionProv.DbaseProvider, $"update users set token = '0' where token = '{token}'");
         }
     }
 }
