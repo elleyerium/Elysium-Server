@@ -23,7 +23,7 @@ namespace NetCoreServer.Database
         }*/
         public void ConnectToDB()
         {
-            SqlConnection = new MySqlConnection("Server=localhost;Database=database;Uid=root;Pwd=34etehuh121;");
+            SqlConnection = new MySqlConnection("Server=localhost;Database=database;Uid=root;Pwd=12345678;");
             FormsManaging.TextGenerator("Connected to a Database.");
         }
 
