@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Threading;
+using LiteNetLib;
+using LiteNetLib.Utils;
 using MySql.Data.MySqlClient;
 using NetCoreServer.Database;
 using NetCoreServer.Server.Auth;
+using NetCoreServer.Server.Statistics;
 using NetCoreServer.Server.User;
-using NetCoreServer.ServerInterface;
+using NetCoreServer.Server.User.PlayerStatistics;
 
 namespace NetCoreServer.Server.Connector
 {
@@ -20,96 +19,121 @@ namespace NetCoreServer.Server.Connector
     {
         private const int Port = 27015;
         private const string ServerAddress = "127.0.0.1";
-        private TcpListener _listener;
-        public List<Player> Players;
+        private ServerHandler _serverHandler;
+        public ServerInfo ServerInfo = new ServerInfo();
+        public static NetManager Server;
         public PlayersHolder Holder;
-        public DatabaseProvider DbaseProvider;
-        public AuthProvider AuthProv;
+        public static DatabaseProvider DatabaseHandler;
+        //public AuthProvider AuthProv;
 
-        public async Task ServerStart()
+        public void Start()
         {
-            Holder = new PlayersHolder();
-            Players = new List<Player>();
-            DbaseProvider = new DatabaseProvider(new ResponseFromDB(), new MySqlConnection())
+            var listener = new EventBasedNetListener(); //Create base listener
+            _serverHandler = new ServerHandler(this); //Create handler for all data transferred between server and clients
+            DatabaseHandler = new DatabaseProvider(new MySqlConnection()); //Handler for database connections
+            DatabaseHandler.Connect();
+            Holder = new PlayersHolder(); //PlayersHolder that contains list with all active players
+            Server = new NetManager(listener); //NetManager for server instance;
+            Server.Start(Port);
+
+            listener.ConnectionRequestEvent += request => //Event that handle all incoming connections
             {
-                ConnectionProv = this
-            };
-
-            DbaseProvider.ConnectToDB();
-            AuthProv = new AuthProvider
-            {
-                ConnectionProv = this
-            };
-            var localAdd = IPAddress.Any;
-            _listener = new TcpListener(localAdd, Port);
-            _listener.Start();
-
-            while (true)
-            {
-                await SyncTask();
-            }
-        }
-
-        private async Task SyncTask()
-        {
-            var cl = await _listener.AcceptTcpClientAsync();
-            SynchronizationUser(new Guid(), cl);
-            //await SynchronizationUser(new Guid(), client);
-        }
-
-        private void SynchronizationUser(Guid giud, TcpClient tcpClient)
-        {
-            FormsManaging.TextGenerator("New client available!");
-            var nwStream = tcpClient.GetStream();
-            FormsManaging.TextGenerator("GetStream");
-            var buffer = new byte[tcpClient.ReceiveBufferSize];
-            FormsManaging.TextGenerator(buffer.Length.ToString());
-            FormsManaging.TextGenerator("Receive buffer size");
-            nwStream.Read(buffer, 0, buffer.Length);
-            FormsManaging.TextGenerator("Read");
-            CreateAction(buffer, 0);
-            FormsManaging.TextGenerator("Action created");
-        }
-
-        private void CreateAction(byte[] data, int id)
-        {
-            var handler = new ServerHandler();
-            handler.HandleClientData(data, this, id);
-        }
-
-        public void BroadcastData()
-        {
-            using (var memoryStream = new MemoryStream())
-            {
-                using (var writer = new BinaryWriter(memoryStream))
+                if (Server.PeersCount < 1000 /* max connections */)
                 {
+                    var byteValue = request.Data.GetByte();
+                    switch (byteValue)
+                    {
+                        case 1:
+                            var authName = request.Data.GetString();
+                            var authPass = request.Data.GetString();
 
+                            if (!DatabaseHandler.AuthenticateUser(authName, authPass)) //Read token and compare with known tokens
+                            {
+                                request.Reject();
+                                return;
+                            }
+                            request.Accept(); //Accept connection if true
+                            Holder.List.Add(new Player(new PlayerAccountInfo(authName, DatabaseHandler.GetTokenByName(authName),
+                                DatabaseHandler.GetIdByUsername(authName), request.RemoteEndPoint)));
+                            break;
+                        case 2:
+                            var regName = request.Data.GetString();
+                            var regPass = request.Data.GetString();
+                            var email = request.Data.GetString();
+
+                            if (!DatabaseHandler.RegisterAccount(regName, regPass, email,
+                                Guid.NewGuid().ToString().Substring(0, 32)))
+                            {
+                                request.Reject();
+                                return;
+                            }
+                            request.Accept(); //Accept connection if true
+                            Holder.List.Add(new Player(new PlayerAccountInfo(regName, DatabaseHandler.GetTokenByName(regName),
+                                DatabaseHandler.GetIdByUsername(regName), request.RemoteEndPoint)));
+                            break;//TODO: Check if user already exists
+                    }
+                    //Add player to our list. We are trying to find it's ID and Name params by given token
                 }
-            }
+                else //Else reject connection and close socket
+                {
+                    var writer = new NetDataWriter();// Create writer class
+                    writer.Put("Invalid token. Cya!");
+                    request.Reject(writer);
+                }
+            };
 
+            listener.PeerConnectedEvent += peer => //Actions we should do whenever new user connected
+            {
+                var player = Utils.SetUserByEndPoint(peer, Holder.List);
+
+                var writer = new NetDataWriter();
+                writer.Put((byte)MessageType.AuthorizationResponse);
+                writer.Put($"Hello {player.AccountInfo.Username}! You need to save your token! {player.AccountInfo.Token}");//Tell client about connection status
+                peer.Send(writer, DeliveryMethod.ReliableOrdered);//Send with reliability
+
+                writer.Reset();
+                writer.Put(player.AccountInfo.Username);
+                writer.Put(player.AccountInfo.Id);
+                Broadcast(MessageType.UserConnected, writer);
+                ServerInfo.ConnectionsCount = Server.GetPeersCount(ConnectionState.Connected);
+            };
+
+            listener.NetworkReceiveEvent += (peer, reader, method) => //Here we need to handle our next action. Depends on action type.
+            {
+                _serverHandler.ServerIncomingHandler(reader, peer);
+                reader.Recycle();
+            };
+
+            listener.PeerDisconnectedEvent += (peer, info) =>
+            {
+                var player = Utils.SetUserByEndPoint(peer, Holder.List);
+
+                var writer = new NetDataWriter();
+                writer.Put(player.AccountInfo.Id);
+                Broadcast(MessageType.UserDisconnected, writer);
+                ServerInfo.ConnectionsCount = Server.GetPeersCount(ConnectionState.Connected);
+            };
+
+            while (!Console.KeyAvailable)
+            {
+                Server.PollEvents();
+                Thread.Sleep(15);
+            }
+            Server.Stop();
+        }
+
+        public static void SendMessage(NetPeer peer, NetDataWriter writer)
+        {
+            peer.Send(writer, DeliveryMethod.ReliableOrdered);
+        }
+
+        public static void Broadcast(MessageType messageType, NetDataWriter netDataWriter)
+        {
+            var data = netDataWriter.CopyData();
+            netDataWriter.Reset();
+            netDataWriter.Put((byte)messageType);
+            netDataWriter.Put(data);
+            Server.SendToAll(netDataWriter, DeliveryMethod.ReliableOrdered);
         }
     }
 }
-
-/*private async Task AlreadyConnected(int id)
-{
-    if (Players.Contains(client))
-    {
-        FormsManaging.TextGenerator("Already exists");
-        await SynchronizationUser(id);
-    }
-}*/
-/*private async Task ConnectFirst(int id)
-{
-    FormsManaging.TextGenerator("Synced as new user with id " + id);
-    NetworkStream nwStream = Clients[id].GetStream();
-    byte[] bufferReceive = new byte[Clients[id].ReceiveBufferSize];
-    int bytesRead = nwStream.Read(bufferReceive, 0, Clients[id].ReceiveBufferSize);
-    string dataReceived = Encoding.ASCII.GetString(bufferReceive,0,bytesRead);
-    CreateAction(dataReceived, id);
-    if (Clients[id].Connected)
-        await AlreadyConnected(id);
-    else Clients[id].Client.Dispose();
-}
-
-} */
