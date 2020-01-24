@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Globalization;
 using NetCoreServer.Server.Connector;
 
 namespace NetCoreServer
 {
-    class Starter
+    public class Starter
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
+            CultureInfo.CurrentCulture = new CultureInfo("en-US");
             var connectionProvider = new ConnectionProvider();
-            _ = connectionProvider.ServerStart();
+            connectionProvider.Start();
             while (true)
             {
                Console.Read();
