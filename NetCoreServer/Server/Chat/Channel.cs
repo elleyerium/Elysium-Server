@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NetCoreServer.Server.Chat
 {
-    class Channels
+    class Channel
     {
 
     }
