@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -10,7 +10,13 @@
       <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     </ItemGroup>
     <ItemGroup>
+      <Folder Include="Assets" />
+      <Folder Include="Server\Multiplayer\Leaderboards" />
       <Folder Include="Server\Multiplayer\Ranking" />
-      <Folder Include="Server\Multiplayer\World" />
+    </ItemGroup>
+    <ItemGroup>
+      <Reference Include="LiteNetLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>Networking\LiteNetLib.dll</HintPath>
+      </Reference>
     </ItemGroup>
 </Project>
