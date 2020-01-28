@@ -5,11 +5,10 @@ using System.Net;
 using LiteNetLib;
 using NetCoreServer.Server.Connector;
 using NetCoreServer.Server.User;
-using Org.BouncyCastle.Asn1.X509;
 
 namespace NetCoreServer
 {
-    public class Utils
+    public static class Utils
     {
         public static Player SetUserByEndPoint(NetPeer peer, IEnumerable<Player> players)
         {

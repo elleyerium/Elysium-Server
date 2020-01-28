@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -85,6 +86,8 @@ namespace NetCoreServer.Server.Connector
             listener.PeerConnectedEvent += peer => //Actions we should do whenever new user connected
             {
                 var player = Utils.SetUserByEndPoint(peer, Holder.List);
+                player.PlayerType = DatabaseHandler.GetPlayerRoleByToken(player.AccountInfo.Token);
+                Console.WriteLine($"{player.PlayerType.ToString()} connected");
 
                 var writer = new NetDataWriter();
                 writer.Put((byte)MessageType.AuthorizationResponse);

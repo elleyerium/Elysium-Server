@@ -24,7 +24,6 @@ namespace NetCoreServer.Server.Connector
                     break;
                 default:
                     throw new Exception("Invalid MessageType.");
-                    break;
             }
         }
 
