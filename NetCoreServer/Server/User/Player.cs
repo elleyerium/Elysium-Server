@@ -8,8 +8,9 @@ namespace NetCoreServer.Server.User
 {
     public class Player
     {
-        internal PlayerMultiplayerInfo MultiplayerInfo;
-        internal PlayerAccountInfo AccountInfo;
+        public PlayerMultiplayerInfo MultiplayerInfo;
+        public readonly PlayerAccountInfo AccountInfo;
+        public PlayerType PlayerType;
 
         public Player(PlayerAccountInfo accountInfo)
         {
