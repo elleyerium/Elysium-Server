@@ -4,6 +4,7 @@ using System.Data;
 using System.IO;
 using MySql.Data.MySqlClient;
 using NetCoreServer.Server.Connector;
+using NetCoreServer.Server.User;
 using NetCoreServer.Server.User.PlayerStatistics;
 using NetCoreServer.ServerInterface;
 
@@ -68,6 +69,18 @@ namespace NetCoreServer.Database
             }
 
             return id;
+        }
+
+        public PlayerType GetPlayerRoleByToken(string token)
+        {
+            var reader = CreateCommand($"select role from users where token = '{token}'");
+            var playerType = PlayerType.Player;
+            while (reader.Read())
+            {
+                playerType = Enum.Parse<PlayerType>(reader["role"].ToString());
+            }
+
+            return playerType;
         }
 
         #region Tokens
