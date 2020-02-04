@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using MySql.Data.MySqlClient;
 using NetCoreServer.Server.Connector;
 using NetCoreServer.Server.User;
@@ -43,7 +44,7 @@ namespace NetCoreServer.Database
             var reader = CreateCommand($"select * from users where username = '{username}' AND password = '{salt}'");
             while (reader.Read())
             {
-                if (reader.HasRows)
+                if (reader.HasRows && _connectionProv.PlayerPool.List.FirstOrDefault(x => x.AccountInfo.Id == uint.Parse(reader["id"].ToString())) == null)
                     return true;
             }
             return false;
@@ -139,12 +140,14 @@ namespace NetCoreServer.Database
         public PlayerStatistics GetInfoByUsername(string username)
         {
             var info = new PlayerStatistics { Username = username };
-            var reader = CreateCommand($"select totalScore, level, spacePoints from scores where username = '{username}'");
+            var reader = CreateCommand($"select totalScore, level, spacePoints, rank, exp from scores where username = '{username}'");
             while (reader.Read())
             {
                 info.Score = uint.Parse(reader["totalScore"].ToString());
                 info.Level = ushort.Parse(reader["level"].ToString());
                 info.SpacePoints = ushort.Parse(reader["spacePoints"].ToString());
+                info.Rank = uint.Parse(reader["rank"].ToString());
+                info.Exp = ushort.Parse(reader["exp"].ToString());
             }
             Console.WriteLine($"score: {info.Score}, level: {info.Level}, SP: {info.SpacePoints}");
             return info;

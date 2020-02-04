@@ -66,9 +66,21 @@ namespace NetCoreServer.Server.Connector
                 case MessageType.PlayerStatsResponse:
                     writer.Put((byte)MessageType.PlayerStatsResponse);
                     var data = reader.GetUInt();
-                    writer.Put(_connectionProvider.PlayerPool.List
-                        .FirstOrDefault(x => x.AccountInfo.Id == data)
-                        ?.Statistics);
+                    Console.WriteLine($"{data} id received");
+                    try
+                    {
+                        Console.WriteLine(_connectionProvider.PlayerPool.List
+                            .FirstOrDefault(x => x.AccountInfo.Id == data)
+                            ?.Statistics.Username);
+                        writer.Put(_connectionProvider.PlayerPool.List
+                            .FirstOrDefault(x => x.AccountInfo.Id == data)
+                            ?.Statistics);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
                     break;
                 case MessageType.GetConcurrentUsersResponse:
                     GetConcurrentUsers(writer);

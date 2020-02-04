@@ -6,6 +6,7 @@ namespace NetCoreServer.Server.User
 {
     public class PlayerStatistics : INetSerializable
     {
+        public uint Id;
         public string Username;
         public uint Rank;
         public ushort Level;
@@ -15,6 +16,7 @@ namespace NetCoreServer.Server.User
 
         public void Serialize(NetDataWriter writer)
         {
+            writer.Put(Id);
             writer.Put(Username);
             writer.Put(Rank);
             writer.Put(Level);

@@ -18,7 +18,7 @@ namespace NetCoreServer.Server.User
         {
             AccountInfo = accountInfo;
             Statistics = ConnectionProvider.DatabaseHandler.GetInfoByUsername(accountInfo.Username);
-            Console.WriteLine($"Hello, I am {AccountInfo.Username}, my token is {AccountInfo.Token}, my ID is {AccountInfo.Id}");
+            Statistics.Id = AccountInfo.Id;
         }
     }
 }

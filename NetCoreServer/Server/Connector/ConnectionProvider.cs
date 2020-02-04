@@ -85,6 +85,7 @@ namespace NetCoreServer.Server.Connector
                 var writer = new NetDataWriter();
                 writer.Put((byte)MessageType.AuthorizationResponse);
                 writer.Put($"Hello {player.AccountInfo.Username}! You need to save your token! {player.AccountInfo.Token}");//Tell client about connection status
+                writer.Put(player.AccountInfo.Id);
                 peer.Send(writer, DeliveryMethod.ReliableOrdered);//Send with reliability
 
                 NotifyUserConnected(player);
@@ -103,6 +104,7 @@ namespace NetCoreServer.Server.Connector
                 var writer = new NetDataWriter();
                 writer.Put(player.AccountInfo.Id);
                 Broadcast(MessageType.UserDisconnected, writer);
+                PlayerPool.List.Remove(player);
                 ServerInfo.ConnectionsCount = Server.GetPeersCount(ConnectionState.Connected);
             };
 
