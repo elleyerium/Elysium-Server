@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading;
 using LiteNetLib;
 using LiteNetLib.Utils;
 using MySql.Data.MySqlClient;
 using NetCoreServer.Database;
-using NetCoreServer.Server.Auth;
 using NetCoreServer.Server.Statistics;
 using NetCoreServer.Server.User;
-using NetCoreServer.Server.User.PlayerStatistics;
 
 namespace NetCoreServer.Server.Connector
 {
@@ -23,23 +16,23 @@ namespace NetCoreServer.Server.Connector
         private ServerHandler _serverHandler;
         public ServerInfo ServerInfo = new ServerInfo();
         public static NetManager Server;
-        public PlayersHolder Holder;
         public static DatabaseProvider DatabaseHandler;
+        public PlayerPool PlayerPool;
         //public AuthProvider AuthProv;
 
         public void Start()
         {
             var listener = new EventBasedNetListener(); //Create base listener
             _serverHandler = new ServerHandler(this); //Create handler for all data transferred between server and clients
-            DatabaseHandler = new DatabaseProvider(new MySqlConnection()); //Handler for database connections
+            DatabaseHandler = new DatabaseProvider(new MySqlConnection(), this); //Handler for database connections
             DatabaseHandler.Connect();
-            Holder = new PlayersHolder(); //PlayersHolder that contains list with all active players
+            PlayerPool = new PlayerPool(); //PlayersHolder that contains list with all active players
             Server = new NetManager(listener); //NetManager for server instance;
             Server.Start(Port);
 
             listener.ConnectionRequestEvent += request => //Event that handle all incoming connections
             {
-                if (Server.PeersCount < 1000 /* max connections */)
+                if (Server.GetPeersCount(ConnectionState.Connected) < 1000 /* max connections */)
                 {
                     var byteValue = request.Data.GetByte();
                     switch (byteValue)
@@ -54,7 +47,7 @@ namespace NetCoreServer.Server.Connector
                                 return;
                             }
                             request.Accept(); //Accept connection if true
-                            Holder.List.Add(new Player(new PlayerAccountInfo(authName, DatabaseHandler.GetTokenByName(authName),
+                            PlayerPool.List.Add(new Player(new PlayerAccountInfo(authName, DatabaseHandler.GetTokenByName(authName),
                                 DatabaseHandler.GetIdByUsername(authName), request.RemoteEndPoint)));
                             break;
                         case 2:
@@ -69,7 +62,7 @@ namespace NetCoreServer.Server.Connector
                                 return;
                             }
                             request.Accept(); //Accept connection if true
-                            Holder.List.Add(new Player(new PlayerAccountInfo(regName, DatabaseHandler.GetTokenByName(regName),
+                            PlayerPool.List.Add(new Player(new PlayerAccountInfo(regName, DatabaseHandler.GetTokenByName(regName),
                                 DatabaseHandler.GetIdByUsername(regName), request.RemoteEndPoint)));
                             break;//TODO: Check if user already exists
                     }
@@ -85,7 +78,7 @@ namespace NetCoreServer.Server.Connector
 
             listener.PeerConnectedEvent += peer => //Actions we should do whenever new user connected
             {
-                var player = Utils.SetUserByEndPoint(peer, Holder.List);
+                var player = Utils.SetUserByEndPoint(peer, PlayerPool.List);
                 player.PlayerType = DatabaseHandler.GetPlayerRoleByToken(player.AccountInfo.Token);
                 Console.WriteLine($"{player.PlayerType.ToString()} connected");
 
@@ -94,11 +87,7 @@ namespace NetCoreServer.Server.Connector
                 writer.Put($"Hello {player.AccountInfo.Username}! You need to save your token! {player.AccountInfo.Token}");//Tell client about connection status
                 peer.Send(writer, DeliveryMethod.ReliableOrdered);//Send with reliability
 
-                writer.Reset();
-                writer.Put(player.AccountInfo.Username);
-                writer.Put(player.AccountInfo.Id);
-                Broadcast(MessageType.UserConnected, writer);
-                ServerInfo.ConnectionsCount = Server.GetPeersCount(ConnectionState.Connected);
+                NotifyUserConnected(player);
             };
 
             listener.NetworkReceiveEvent += (peer, reader, method) => //Here we need to handle our next action. Depends on action type.
@@ -109,7 +98,7 @@ namespace NetCoreServer.Server.Connector
 
             listener.PeerDisconnectedEvent += (peer, info) =>
             {
-                var player = Utils.SetUserByEndPoint(peer, Holder.List);
+                var player = Utils.SetUserByEndPoint(peer, PlayerPool.List);
 
                 var writer = new NetDataWriter();
                 writer.Put(player.AccountInfo.Id);
@@ -137,6 +126,16 @@ namespace NetCoreServer.Server.Connector
             netDataWriter.Put((byte)messageType);
             netDataWriter.Put(data);
             Server.SendToAll(netDataWriter, DeliveryMethod.ReliableOrdered);
+        }
+
+        private void NotifyUserConnected(Player player)
+        {
+            var writer = new NetDataWriter();
+            writer.Reset();
+            writer.Put(player.AccountInfo.Username);
+            writer.Put(player.AccountInfo.Id);
+            Broadcast(MessageType.UserConnected, writer);
+            ServerInfo.ConnectionsCount = Server.GetPeersCount(ConnectionState.Connected);
         }
     }
 }
