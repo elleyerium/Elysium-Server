@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace NetCoreServer.ServerInterface
 {
-
-    public class FormsManaging
+    public static class FormsManaging
     {
-        public static int size;
-        public static void TextGenerator(string Message)
+        public static void TextGenerator(string message)
         {
-            Console.WriteLine( $"{DateTime.Now.ToString()} ---> {Message}");
+            Console.WriteLine( $"{DateTime.Now.ToString(CultureInfo.InvariantCulture)} ---> {message}");
         }
     }
 }

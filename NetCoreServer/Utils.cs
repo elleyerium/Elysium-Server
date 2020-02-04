@@ -13,11 +13,10 @@ namespace NetCoreServer
         public static Player SetUserByEndPoint(NetPeer peer, IEnumerable<Player> players)
         {
             var player = players.FirstOrDefault(x => x.AccountInfo.EndPoint.Equals(peer.EndPoint)); //Find player instance with same IP
-            if (player != null)
-            {
-                return player;
-            }
-            throw new Exception("Invalid endpoint. Can't find this player.");
+            if (player == null)
+                throw new Exception("Invalid endpoint. Can't find this player.");
+            player.Peer = peer;
+            return player;
         }
     }
 }

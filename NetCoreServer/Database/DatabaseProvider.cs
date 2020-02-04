@@ -5,36 +5,38 @@ using System.IO;
 using MySql.Data.MySqlClient;
 using NetCoreServer.Server.Connector;
 using NetCoreServer.Server.User;
-using NetCoreServer.Server.User.PlayerStatistics;
 using NetCoreServer.ServerInterface;
 
 namespace NetCoreServer.Database
 {
     public class DatabaseProvider
     {
-        internal ConnectionProvider ConnectionProv;
-        internal MySqlConnection SqlConnection;
+        private ConnectionProvider _connectionProv;
+        private MySqlConnection _sqlConnection;
 
-        public DatabaseProvider(MySqlConnection sqlConnection)
+        internal DatabaseProvider(MySqlConnection sqlConnection, ConnectionProvider connectionProv)
         {
-            SqlConnection = sqlConnection;
+            _connectionProv = connectionProv;
+            _sqlConnection = sqlConnection;
         }
 
         public void Connect()
         {
-            SqlConnection = new MySqlConnection("Server=localhost;Database=database;Uid=root;Pwd=12345678;");
+            _sqlConnection = new MySqlConnection("Server=localhost;Database=database;Uid=root;Pwd=12345678;");
             FormsManaging.TextGenerator("Connected to the Database.");
         }
 
         private MySqlDataReader CreateCommand(string data)
         {
-            if(SqlConnection.State == ConnectionState.Open)
-                SqlConnection.Close();
-            SqlConnection.Open();
-            var command = SqlConnection.CreateCommand();
+            if(_sqlConnection.State == ConnectionState.Open)
+                _sqlConnection.Close();
+            _sqlConnection.Open();
+            var command = _sqlConnection.CreateCommand();
             command.CommandText = data;
             return command.ExecuteReader();
         }
+
+        #region auth
 
         public bool AuthenticateUser(string username, string salt)
         {
@@ -55,17 +57,28 @@ namespace NetCoreServer.Database
             {
                 Console.WriteLine("Affected");
             }
+
+            if (reader.RecordsAffected > 0)
+            {
+                CreateCommand($"insert into scores (username, level, totalScore, exp, spacePoints) values " +
+                              $"('{username}', '{1}', '{0}', '{0}' , '{0}')");
+            }
+
             return reader.RecordsAffected > 0;
         }
 
-        public int GetIdByUsername(string username)
+        #endregion
+
+        #region utils
+
+        public uint GetIdByUsername(string username)
         {
             var reader = CreateCommand($"select id from users where username = '{username}'");
-            var id = 0;
+            uint id = 0;
 
             while (reader.Read())
             {
-                id = int.Parse(reader["id"].ToString());
+                id = uint.Parse(reader["id"].ToString());
             }
 
             return id;
@@ -82,8 +95,6 @@ namespace NetCoreServer.Database
 
             return playerType;
         }
-
-        #region Tokens
 
         public IEnumerable<string> GetTokens()
         {
@@ -125,20 +136,37 @@ namespace NetCoreServer.Database
             return token;
         }
 
-        #endregion
-
-        public PlayerMultiplayerInfo GetInfoByUsername(string username)
+        public PlayerStatistics GetInfoByUsername(string username)
         {
-            var info = new PlayerMultiplayerInfo();
-            var reader = CreateCommand($"select score, level, spacepoints from scores where username = '{username}'");
+            var info = new PlayerStatistics { Username = username };
+            var reader = CreateCommand($"select totalScore, level, spacePoints from scores where username = '{username}'");
             while (reader.Read())
             {
-                info.Score = int.Parse(reader["score"].ToString());
-                info.Level = int.Parse(reader["level"].ToString());
-                info.SpacePoints = int.Parse(reader["spacepoints"].ToString());
+                info.Score = uint.Parse(reader["totalScore"].ToString());
+                info.Level = ushort.Parse(reader["level"].ToString());
+                info.SpacePoints = ushort.Parse(reader["spacePoints"].ToString());
             }
             Console.WriteLine($"score: {info.Score}, level: {info.Level}, SP: {info.SpacePoints}");
             return info;
         }
+
+        #endregion
+
+        #region additional
+
+        public string GetAvatarSource(string username)
+        {
+            var reader = CreateCommand($"select avatar from users where username = '{username}'");
+            var source = string.Empty;
+
+            while (reader.Read())
+            {
+                source = reader["avatar"].ToString();
+            }
+
+            return source;
+        }
+
+        #endregion
     }
 }

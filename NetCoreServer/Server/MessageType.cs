@@ -14,7 +14,10 @@ namespace NetCoreServer.Server
         PlayerStatsResponse = 12,
         SendChatMessage = 13,
         IncomingChatMessage = 14, //Broadcast
-        CreateOnlineRoomRequest = 15,
-        CreateOnlineRoomResponse = 16 //Broadcast
+        UpdateProfileSettings = 15,
+        UpdateProfileSettingsResponse = 16,
+        GetAvatar = 17,
+        GetAvatarResponse = 18
+        //CreateOnlineRoomResponse = 16 //Broadcast
     }
 }

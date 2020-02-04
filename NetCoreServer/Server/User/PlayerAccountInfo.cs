@@ -1,22 +1,26 @@
 using System;
 using System.Net;
-using NetCoreServer.Server.User.PlayerStatistics;
+using NetCoreServer.Database;
+using NetCoreServer.Server.Connector;
+using NetCoreServer.Server.User.Files;
 
 namespace NetCoreServer.Server.User
 {
     public class PlayerAccountInfo
     {
-        internal string Username;
-        internal string Token;
-        internal EndPoint EndPoint;
-        internal int Id;
+        internal readonly Avatar Avatar;
+        internal readonly string Username;
+        internal readonly string Token;
+        internal readonly EndPoint EndPoint;
+        internal readonly uint Id;
 
-        public PlayerAccountInfo(string uname, string token, int id, EndPoint endPoint)
+        public PlayerAccountInfo(string username, string token, uint id, EndPoint endPoint)
         {
-            Username = uname;
+            Username = username;
             Token = token;
             Id = id;
             EndPoint = endPoint;
+            Avatar = new Avatar(ConnectionProvider.DatabaseHandler.GetAvatarSource(username));
         }
     }
 }

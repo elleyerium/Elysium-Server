@@ -19,4 +19,7 @@
         <HintPath>Networking\LiteNetLib.dll</HintPath>
       </Reference>
     </ItemGroup>
+    <ItemGroup>
+      <Content Include="Assets\LiteNetLib\LiteNetLib.csproj" />
+    </ItemGroup>
 </Project>
