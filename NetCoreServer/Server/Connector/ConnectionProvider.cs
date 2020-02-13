@@ -11,11 +11,11 @@ namespace NetCoreServer.Server.Connector
 {
     internal class ConnectionProvider
     {
-        private const int Port = 27015;
+        private const int ServerPort = 27015;
         private const string ServerAddress = "127.0.0.1";
         private ServerHandler _serverHandler;
-        public ServerInfo ServerInfo = new ServerInfo();
-        public static NetManager Server;
+        public readonly ServerInfo ServerInfo = new ServerInfo();
+        private static NetManager _server;
         public static DatabaseProvider DatabaseHandler;
         public PlayerPool PlayerPool;
         //public AuthProvider AuthProv;
@@ -27,12 +27,12 @@ namespace NetCoreServer.Server.Connector
             DatabaseHandler = new DatabaseProvider(new MySqlConnection(), this); //Handler for database connections
             DatabaseHandler.Connect();
             PlayerPool = new PlayerPool(); //PlayersHolder that contains list with all active players
-            Server = new NetManager(listener); //NetManager for server instance;
-            Server.Start(Port);
+            _server = new NetManager(listener); //NetManager for server instance;
+            _server.Start(ServerPort);
 
             listener.ConnectionRequestEvent += request => //Event that handle all incoming connections
             {
-                if (Server.GetPeersCount(ConnectionState.Connected) < 1000 /* max connections */)
+                if (_server.GetPeersCount(ConnectionState.Connected) < 1000 /* max connections */)
                 {
                     var byteValue = request.Data.GetByte();
                     switch (byteValue)
@@ -97,6 +97,11 @@ namespace NetCoreServer.Server.Connector
                 reader.Recycle();
             };
 
+            listener.NetworkErrorEvent += (point, error) =>
+            {
+
+            };
+
             listener.PeerDisconnectedEvent += (peer, info) =>
             {
                 var player = Utils.SetUserByEndPoint(peer, PlayerPool.List);
@@ -105,15 +110,14 @@ namespace NetCoreServer.Server.Connector
                 writer.Put(player.AccountInfo.Id);
                 Broadcast(MessageType.UserDisconnected, writer);
                 PlayerPool.List.Remove(player);
-                ServerInfo.ConnectionsCount = Server.GetPeersCount(ConnectionState.Connected);
+                ServerInfo.ConnectionsCount = _server.GetPeersCount(ConnectionState.Connected);
             };
 
-            while (!Console.KeyAvailable)
+            while (true)
             {
-                Server.PollEvents();
+                _server.PollEvents();
                 Thread.Sleep(15);
             }
-            Server.Stop();
         }
 
         public static void SendMessage(NetPeer peer, NetDataWriter writer)
@@ -127,7 +131,7 @@ namespace NetCoreServer.Server.Connector
             netDataWriter.Reset();
             netDataWriter.Put((byte)messageType);
             netDataWriter.Put(data);
-            Server.SendToAll(netDataWriter, DeliveryMethod.ReliableOrdered);
+            _server.SendToAll(netDataWriter, DeliveryMethod.ReliableOrdered);
         }
 
         private void NotifyUserConnected(Player player)
@@ -137,7 +141,7 @@ namespace NetCoreServer.Server.Connector
             writer.Put(player.AccountInfo.Username);
             writer.Put(player.AccountInfo.Id);
             Broadcast(MessageType.UserConnected, writer);
-            ServerInfo.ConnectionsCount = Server.GetPeersCount(ConnectionState.Connected);
+            ServerInfo.ConnectionsCount = _server.GetPeersCount(ConnectionState.Connected);
         }
     }
 }
